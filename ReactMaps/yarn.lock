@@ -3294,9 +3294,13 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-react-native@0.50.0:
-  version "0.50.0"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.50.0.tgz#edc98470eaf729573b56307e22efe83044088fda"
+react-native-maps@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.17.1.tgz#ab2236341fd984dac8864202ae55331bc262f60c"
+
+react-native@0.50.2:
+  version "0.50.2"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.50.2.tgz#cad6152c716a4fda950f226c71affc2d494fa730"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
