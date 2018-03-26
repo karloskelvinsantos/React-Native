@@ -1,13 +1,10 @@
 import React from 'react';
 import { StackNavigator, TabNavigator } from 'react-navigation';
-
 import HeaderRight from 'components/HeaderRight';
-
 import Welcome from 'pages/welcome';
 import Repositories from 'pages/repositories';
 import Organizations from 'pages/organizations';
-
-import { metrics } from 'styles';
+import { metrics, colors } from 'styles';
 
 const createNavigator = (isLogged = false) => StackNavigator({
   Welcome: {
@@ -23,6 +20,15 @@ const createNavigator = (isLogged = false) => StackNavigator({
       },
     }, {
       tabBarPosition: 'bottom',
+      tabBarOptions: {
+        showIcon: true,
+        showLabel: false,
+        activeTintColor: colors.white,
+        inactiveTintColor: colors.whiteTransparent,
+        style:{
+          backgroundColor: colors.secundary,
+        },
+      },
     }),
   },
 }, {
