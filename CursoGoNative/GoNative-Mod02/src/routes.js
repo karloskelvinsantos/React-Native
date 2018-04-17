@@ -25,7 +25,7 @@ const createNavigator = (isLogged = false) => StackNavigator({
         showLabel: false,
         activeTintColor: colors.white,
         inactiveTintColor: colors.whiteTransparent,
-        style:{
+        style: {
           backgroundColor: colors.secundary,
         },
       },
