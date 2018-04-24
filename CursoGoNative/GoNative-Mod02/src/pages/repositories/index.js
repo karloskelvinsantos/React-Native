@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import api from 'services/api';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   View,
   AsyncStorage,
@@ -7,7 +8,8 @@ import {
   FlatList,
   Text,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
+import RepositoryItem from './components/RepositoryItem';
 
 import styles from './styles';
 
@@ -27,14 +29,14 @@ export default class Repositories extends Component {
   }
 
   loadRepositories = async () => {
-    const username = await AsyncStorage.getItem("@Githuber:username");
+    const username = await AsyncStorage.getItem('@Githuber:username');
     const response = await api.get(`/users/${username}/repos`);
 
     this.setState({ data: response.data, loading: false });
   };
 
   renderListItem = ({ item }) => (
-    <Text>{item.full_name}</Text>
+    <RepositoryItem repository={item} />
   )
 
   renderList = () => (
