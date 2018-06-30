@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import api from 'services/api';
 import {
   View,
-  Text,
   AsyncStorage,
   ActivityIndicator,
   FlatList,
@@ -21,6 +20,7 @@ export default class Organizations extends Component {
   state = {
     data: [],
     loading: true,
+    refreshing: false,
   };
 
   componentDidMount() {
@@ -28,10 +28,16 @@ export default class Organizations extends Component {
   }
 
   loadOrganizations = async () => {
+    this.setState({ refreshing: true });
+
     const username = await AsyncStorage.getItem('@Githuber:username');
     const response = await api.get(`/users/${username}/orgs`);
 
-    this.setState({ data: response.data, loading: false });
+    this.setState({
+      data: response.data,
+      loading: false,
+      refreshing: false,
+    });
   };
 
   renderListItem = ({ item }) => (
@@ -45,6 +51,8 @@ export default class Organizations extends Component {
       renderItem={this.renderListItem}
       numColumns={2}
       columnWrapperStyle={styles.columnContainer}
+      onRefresh={this.loadOrganizations}
+      refreshing={this.state.refreshing}
     />
   );
 
