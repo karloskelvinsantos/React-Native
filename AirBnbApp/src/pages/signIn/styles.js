@@ -24,7 +24,7 @@ const Input = styled.TextInput`
 `;
 
 const ErrorMessage = styled.Text`
-    textAlign: 20px;
+    textAlign: center;
     borderRadius: 5px;
     backgroundColor: #FC6663;
     alignSelf: stretch;
