@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { AsyncStorage } from 'react-native';
 
 /* Endereços para cada emulador/simulador:
@@ -8,19 +9,19 @@ import { AsyncStorage } from 'react-native';
 */
 
 const api = axios.create({
-    baseURL: 'https://airbnb-server.herokuapp.com/',
+    baseURL: 'https://airbnb-server.herokuapp.com',
 });
 
 api.interceptors.request.use(async (config) => {
-  try {
+  try{
     const token = await AsyncStorage.getItem('@AirBnbApp:token');
 
     if (token) {
-      config.headers.Authorization = `Baerer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
-  } catch (error) {
+  } catch (error){
     alert(error);
   }
 });

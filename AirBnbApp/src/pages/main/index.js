@@ -19,6 +19,7 @@ export default class Main extends Component {
     locations: [],
   };
 
+  
   async componentDidMount() {
     try {
       const response = await api.get('/properties', {
@@ -43,7 +44,7 @@ export default class Main extends Component {
         <AnnotationContainer>
           <AnnotationText>{location.price}</AnnotationText>
         </AnnotationContainer>
-        <MapboxGL.Callout title={locaton.title}/>
+        <MapboxGL.Callout title={location.title}/>
       </MapboxGL.PointAnnotation>
     ))
   );
@@ -53,7 +54,7 @@ export default class Main extends Component {
       <Container>
         <StatusBar barStyle="light-content"/>
         <MapboxGL.MapView
-          centerCoordinate={[-7.213801, -39.328920]}
+          centerCoordinate={[-39.328920, -7.213801]}
           style={{ flex: 1}}
           styleURL={MapboxGL.StyleURL.Dark}
         >
