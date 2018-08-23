@@ -2,8 +2,18 @@ import './config/ReactotronConfig';
 import React from 'react';
 import { StyleSheet, Text, View, Platform, FlatList } from 'react-native';
 import { Constants } from 'expo';
+import MovieItem from './components/MovieItem';
+
+const isFavorite = (myMoviesFavorites, item) => {
+  return myMoviesFavorites.filter(({ id }) => item.id === id).length >= 1;
+}
 
 export default class App extends React.Component {
+  state = {
+    movies: [],
+    myMoviesFavorites: [],
+  };
+
   async componentDidMount() {
     const currentYear = new Date().getFullYear();
     const url = "https://api.themoviedb.org/3/discover/movie" +
@@ -18,7 +28,30 @@ export default class App extends React.Component {
     const movieCall = await fetch(url);
     const response = await movieCall.json();
 
-    console.tron.log(response);
+    const movies = response.results;
+
+    this.setState({
+      movies: movies
+    })
+  }
+
+  handleToggleFavorite = (item) => {
+    this.setState((currentState) => {
+      if (isFavorite(currentState.myMoviesFavorites, item)){
+        return {
+          myMoviesFavorites: currentState.myMoviesFavorites.filter(({ id }) => {
+            return id !== item.id;
+          })
+        };
+      }
+
+      return {
+        myMoviesFavorites: currentState.myMoviesFavorites.concat([{ id: item.id }])
+      };
+    }, () => {
+        console.log(this.state.myMoviesFavorites);
+      }
+    );
   }
 
   render() {
@@ -28,14 +61,17 @@ export default class App extends React.Component {
           <Text style={styles.headerTitle}>Filmes do Ano</Text>
         </View>
         <FlatList
-          data={[
-            { id: '1', title: 'Filme 1'},
-            { id: '2', title: 'Filme 2'},
-            { id: '3', title: 'Filme 3'},
-            { id: '4', title: 'Filme 4'},
-          ]}
-          renderItem={(info) => <Text>{info.item.title}</Text>}
-          keyExtractor={(item) => item.id}
+          data={ this.state.movies }
+          numColumns={3}
+          renderItem={({ item }) => (
+            <MovieItem 
+              item={item} 
+              onToggleFavorite={() => this.handleToggleFavorite(item)} 
+              isFavorite={isFavorite(this.state.myMoviesFavorites, item)}
+            />
+          )}
+          keyExtractor={(item) => `${item.id}`}
+          extraData={this.state.myMoviesFavorites}
         />
       </View>
     );
