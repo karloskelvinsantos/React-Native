@@ -1,12 +1,18 @@
 import './config/ReactotronConfig';
 import React from 'react';
-import { StyleSheet, Text, View, Platform, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Platform, FlatList, TouchableOpacity } from 'react-native';
 import { Constants } from 'expo';
 import MovieItem from './components/MovieItem';
 
 const isFavorite = (myMoviesFavorites, item) => {
   return myMoviesFavorites.filter(({ id }) => item.id === id).length >= 1;
-}
+};
+
+const filterFavorities = (myMoviesFavorites, movies) => {
+  return movies.filter(movie => {
+    return isFavorite(myMoviesFavorites, movie);
+  });
+};
 
 export default class App extends React.Component {
   state = {
@@ -14,7 +20,11 @@ export default class App extends React.Component {
     myMoviesFavorites: [],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.fetchMovies();
+  }
+
+  fetchMovies = async () => {
     const currentYear = new Date().getFullYear();
     const url = "https://api.themoviedb.org/3/discover/movie" +
       `?primary_release_year=${currentYear}` +
@@ -54,11 +64,28 @@ export default class App extends React.Component {
     );
   }
 
+  handleShowMyFavorities = () => {
+    this.setState(currentState => {
+      return {
+        movies: filterFavorities(currentState.myMoviesFavorites, currentState.movies)
+      };
+    });
+  };
+
+  handleShowAllMovies = () => {
+    this.fetchMovies();
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Filmes do Ano</Text>
+          <TouchableOpacity onPress={this.handleShowAllMovies}>
+            <Text style={styles.headerTitle}>Filmes do Ano</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.handleShowMyFavorities}>
+            <Text style={styles.myFavoriteButtonText}>Meus Favoritos</Text>
+          </TouchableOpacity>
         </View>
         <FlatList
           data={ this.state.movies }
@@ -83,14 +110,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: "row",
     paddingTop: Constants.statusBarHeight + 5,
     backgroundColor: "#eee",
     paddingHorizontal: 6,
     paddingBottom: 10,
+    justifyContent: "space-between"
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: Platform.OS === "ios" ? "Avenir" : "Roboto",
-
+  },
+  myFavoriteButtonText: {
+    fontSize: 18,
+    fontFamily: Platform.OS === "ios" ? "Avenir" : "Roboto",
   }
 });
