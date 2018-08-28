@@ -1,6 +1,14 @@
 import './config/ReactotronConfig';
 import React from 'react';
-import { StyleSheet, Text, View, Platform, FlatList, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  Platform, 
+  FlatList, 
+  TouchableOpacity, 
+  AsyncStorage 
+} from 'react-native';
 import { Constants } from 'expo';
 import MovieItem from './components/MovieItem';
 
@@ -18,6 +26,7 @@ export default class App extends React.Component {
   state = {
     movies: [],
     myMoviesFavorites: [],
+    showOnlyFavorites: false,
   };
 
   componentDidMount() {
@@ -40,18 +49,31 @@ export default class App extends React.Component {
 
     const movies = response.results;
 
+    const myFavorites = await AsyncStorage.getItem('@MyFavoritesMovies:myFavorites');
+
     this.setState({
-      movies: movies
+      movies: movies,
+      myMoviesFavorites: JSON.parse(myFavorites) || [],
+      showOnlyFavorites: false,
     })
   }
 
   handleToggleFavorite = (item) => {
     this.setState((currentState) => {
       if (isFavorite(currentState.myMoviesFavorites, item)){
+        const myMoviesFavorites = currentState.myMoviesFavorites.filter(({ id }) => {
+          return id !== item.id;
+        });
+
+        if (currentState.showOnlyFavorites){
+          return {
+            myMoviesFavorites,
+            movies: filterFavorities(myMoviesFavorites, currentState.movies),
+          }
+        }
+
         return {
-          myMoviesFavorites: currentState.myMoviesFavorites.filter(({ id }) => {
-            return id !== item.id;
-          })
+          myMoviesFavorites
         };
       }
 
@@ -59,7 +81,7 @@ export default class App extends React.Component {
         myMoviesFavorites: currentState.myMoviesFavorites.concat([{ id: item.id }])
       };
     }, () => {
-        console.log(this.state.myMoviesFavorites);
+        AsyncStorage.setItem('@MyFavoritesMovies:myFavorites', JSON.stringify(this.state.myMoviesFavorites));
       }
     );
   }
@@ -67,7 +89,8 @@ export default class App extends React.Component {
   handleShowMyFavorities = () => {
     this.setState(currentState => {
       return {
-        movies: filterFavorities(currentState.myMoviesFavorites, currentState.movies)
+        movies: filterFavorities(currentState.myMoviesFavorites, currentState.movies),
+        showOnlyFavorites: true,
       };
     });
   };
