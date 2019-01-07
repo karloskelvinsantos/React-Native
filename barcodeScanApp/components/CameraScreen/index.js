@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Text,
     View,
-    ToastAndroid
+    Vibration
 } from 'react-native';
 import {
     Camera,
@@ -16,7 +16,6 @@ export default class CameraScreen extends React.Component {
 
     state = {
         hasCameraPermission: null,
-        barcode: '',
         type: Camera.Constants.Type.back,
         autoFocus: Camera.Constants.AutoFocus.on
     };
@@ -27,11 +26,11 @@ export default class CameraScreen extends React.Component {
     }
 
     barcodeRead = (e) => {
+        Vibration.vibrate(500);
         if (e.data != null){
-            //ToastAndroid.showWithGravity(e.data, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-            this.props.navigation.push('Home', {
+            this.props.navigation.navigate('Home', {
                 barcode: e.data,
-            })
+            });
         }
     }
 

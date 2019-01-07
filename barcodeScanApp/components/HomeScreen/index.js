@@ -8,7 +8,7 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    const barcode = navigation.getParam('barcode', '--');
+    const barcode = navigation.getParam('barcode', '');
 
     return (
       <View style={styles.container}>
@@ -21,7 +21,7 @@ export default class HomeScreen extends React.Component {
           color="#841584"
         />
 
-        <Text>Código de Barras: {JSON.stringify(barcode)}</Text>
+        <Text numberOfLines={3}>Código de Barras: {barcode}</Text>
       </View>
     );
   }
@@ -34,4 +34,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textCodigo: {
+
+  }
 });
