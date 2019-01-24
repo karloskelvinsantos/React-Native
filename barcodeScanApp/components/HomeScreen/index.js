@@ -17,9 +17,10 @@ export default class HomeScreen extends React.Component {
             console.log("ButtonClick")
             this.props.navigation.navigate('Camera');
           }}
-          title="Scan BarCode"
+          title="Scan"
           color="#841584"
-        />
+        >
+        </Button>
 
         <Text numberOfLines={3}>Código de Barras: {barcode}</Text>
       </View>
@@ -34,7 +35,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textCodigo: {
-
-  }
 });
