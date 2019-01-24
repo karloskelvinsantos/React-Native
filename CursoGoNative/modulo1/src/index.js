@@ -1,12 +1,14 @@
+import './config/ReactotronConfig';
 import React, {Component} from 'react';
-import { 
-  StyleSheet, 
-  Text, 
+import {
+  StyleSheet,
+  Text,
   View,
   Button
 } from 'react-native';
 
 import Todo from './components/Todo';
+
 
 export default class App extends Component {
   state = {
