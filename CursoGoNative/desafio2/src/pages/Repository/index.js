@@ -4,35 +4,70 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  AsyncStorage
 } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
 import ItemList from "~/components/ItemList";
 
+import api from "~/services/api";
+
 export default class Repository extends Component {
   state = {
-    repository: ""
+    refreshing: false,
+    repository: "",
+    data: []
   };
 
   static navigationOptions = {
-    title: "Repositórios"
+    title: "GitHub Explorer"
   };
 
   inputSearchChange = repository => {
     this.setState({ repository: repository });
-    //alert(this.state.repository);
   };
 
-  findRepositoriesIssues = () => {
-    //alert("Clicou");
+  findRepositoriesIssues = async () => {
+    this.setState({ refreshing: !this.state.refreshing });
+    try {
+      const response = await api.get(this.state.repository);
+
+      this.setState({
+        data: [response.data, ...this.state.data]
+      });
+
+      await AsyncStorage.setItem(
+        "@GithubExplore:repositories",
+        JSON.stringify(this.state.data)
+      );
+
+      console.tron.log(this.state.data);
+    } catch (error) {
+      if (error.response.status === 404) {
+        alert("Repositório não encontrado!");
+      } else {
+        alert("Ops, tivemos um erro, tente novamente!");
+      }
+    }
+
+    this.setState({ repository: "", refreshing: !this.state.refreshing });
   };
+
+  async componentWillMount() {
+    const repositories = await AsyncStorage.getItem(
+      "@GithubExplore:repositories"
+    );
+
+    this.setState({ data: JSON.parse(repositories) });
+  }
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.containerSearch}>
           <TextInput
+            value={this.state.repository}
             style={styles.inputSearch}
             placeholder="Adicionar novo repositório"
             onChangeText={this.inputSearchChange}
@@ -45,27 +80,21 @@ export default class Repository extends Component {
           </TouchableOpacity>
         </View>
         <FlatList
-          data={[
-            {
-              id: "1",
-              repositorio: "asdasd",
-              descricao: "asdas",
-              image:
-                "https://camo.githubusercontent.com/f8ea5eab7494f955e90f60abc1d13f2ce2c2e540/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f323037383234352f3235393331332f35653833313336322d386362612d313165322d383435332d6536626439353663383961342e706e67"
-            },
-            {
-              id: "1",
-              repositorio: "asdasd",
-              descricao: "asdas",
-              image:
-                "https://camo.githubusercontent.com/f8ea5eab7494f955e90f60abc1d13f2ce2c2e540/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f323037383234352f3235393331332f35653833313336322d386362612d313165322d383435332d6536626439353663383961342e706e67"
-            }
-          ]}
+          data={this.state.data}
+          keyExtractor={item => item.node_id}
+          refreshing={this.state.refreshing}
+          onRefresh={() => {}}
           renderItem={({ item }) => (
             <ItemList
-              title={item.repositorio}
-              description={item.descricao}
-              image={item.image}
+              onClick={() => {
+                this.props.navigation.navigate("RepositoryIssues", {
+                  repositoryName: item.name,
+                  repositoryFullName: item.full_name
+                });
+              }}
+              title={item.name}
+              description={item.organization.login}
+              image={item.organization.avatar_url}
             />
           )}
         />

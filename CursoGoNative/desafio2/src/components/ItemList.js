@@ -4,8 +4,8 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 
 const ItemList = props => {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity>
+    <TouchableOpacity onPress={props.onClick}>
+      <View style={styles.container}>
         <View style={styles.containerCard}>
           <Image source={{ uri: props.image }} style={styles.image} />
           <View style={styles.containerCardText}>
@@ -14,8 +14,8 @@ const ItemList = props => {
           </View>
           <Icon name="angle-right" size={30} />
         </View>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   containerCardText: {
     flex: 2,
     flexDirection: "column",
+    marginTop: -5,
     marginLeft: 20
   },
   title: {
