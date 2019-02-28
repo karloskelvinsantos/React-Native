@@ -1,18 +1,20 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 
 const ItemList = props => {
   return (
     <View style={styles.container}>
-      <View style={styles.containerCard}>
-        <Image source={{ uri: props.image }} style={styles.imageRepository} />
-        <View style={styles.containerCardText}>
-          <Text style={styles.titleRepository}>{props.title}</Text>
-          <Text style={styles.subtitleRepository}>{props.subtitle}</Text>
+      <TouchableOpacity>
+        <View style={styles.containerCard}>
+          <Image source={{ uri: props.image }} style={styles.image} />
+          <View style={styles.containerCardText}>
+            <Text style={styles.title}>{props.title}</Text>
+            <Text style={styles.subtitle}>{props.description}</Text>
+          </View>
+          <Icon name="angle-right" size={30} />
         </View>
-        <Icon name="angle-right" size={30} />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -22,24 +24,28 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "white",
     borderRadius: 5,
-    padding: 10
+    padding: 8,
+    marginTop: 15
   },
   containerCard: {
     flexDirection: "row",
+    justifyContent: "space-around",
     padding: 12
   },
   containerCardText: {
+    flex: 2,
     flexDirection: "column",
-    marginLeft: 20,
-    marginRight: 150
+    marginLeft: 20
   },
-  titleRepository: {
-    fontSize: 18
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black"
   },
-  subtitleRepository: {
+  subtitle: {
     fontSize: 14
   },
-  imageRepository: {
+  image: {
     width: 40,
     height: 40
   }
