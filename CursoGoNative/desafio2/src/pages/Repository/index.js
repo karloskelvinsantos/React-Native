@@ -33,14 +33,37 @@ export default class Repository extends Component {
     try {
       const response = await api.get(this.state.repository);
 
-      this.setState({
-        data: [response.data, ...this.state.data]
-      });
+      if (response.data) {
+        let repository = {};
+        repository.name = response.data.name;
+        repository.full_name = response.data.full_name;
+        repository.id = response.data.id;
 
-      await AsyncStorage.setItem(
-        "@GithubExplore:repositories",
-        JSON.stringify(this.state.data)
-      );
+        if (response.data.organization) {
+          repository.organization = {};
+          repository.organization.login = response.data.organization.login;
+          repository.organization.avatar_url =
+            response.data.organization.avatar_url;
+        }
+
+        if (response.data.owner) {
+          repository.owner = {};
+          repository.owner.login = response.data.owner.login;
+          repository.owner.avatar_url = response.data.owner.avatar_url;
+        }
+
+        let repositories = this.state.data;
+        repositories.push(repository);
+
+        this.setState({
+          data: repositories
+        });
+
+        await AsyncStorage.setItem(
+          "@GithubExplore:repositories",
+          JSON.stringify(this.state.data)
+        );
+      }
 
       console.tron.log(this.state.data);
     } catch (error) {
@@ -80,8 +103,9 @@ export default class Repository extends Component {
           </TouchableOpacity>
         </View>
         <FlatList
+          style={styles.flatListRepositories}
           data={this.state.data}
-          keyExtractor={item => item.node_id}
+          keyExtractor={item => String(item.id)}
           refreshing={this.state.refreshing}
           onRefresh={() => {}}
           renderItem={({ item }) => (
@@ -93,8 +117,14 @@ export default class Repository extends Component {
                 });
               }}
               title={item.name}
-              description={item.organization.login}
-              image={item.organization.avatar_url}
+              description={
+                item.organization ? item.organization.login : item.owner.login
+              }
+              image={
+                item.organization
+                  ? item.organization.avatar_url
+                  : item.owner.avatar_url
+              }
             />
           )}
         />
@@ -106,13 +136,14 @@ export default class Repository extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#DCDCDC"
   },
   containerSearch: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 30
+    padding: 10,
+    paddingTop: 20,
+    marginBottom: 20,
+    justifyContent: "space-around"
   },
   inputSearch: {
     flex: 2,
@@ -125,7 +156,8 @@ const styles = StyleSheet.create({
   buttonSearch: {
     marginTop: 5
   },
-  containerList: {
-    marginTop: 30
+  flatListRepositories: {
+    marginLeft: 10,
+    marginRight: 10
   }
 });

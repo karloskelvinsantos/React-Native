@@ -7,7 +7,9 @@ import api from "~/services/api";
 
 export default class RepositoryIssues extends Component {
   state = {
-    title: ""
+    title: "",
+    stateIssue: "all",
+    page: 1
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -17,16 +19,22 @@ export default class RepositoryIssues extends Component {
   };
 
   async componentDidMount() {
+    this.findIssues();
+  }
+
+  findIssues = async () => {
     const repository = this.props.navigation.getParam("repositoryFullName", "");
 
     try {
-      const response = await api.get(`${repository}/issues`);
+      const response = await api.get(
+        `${repository}/issues?state=${this.state.stateIssue}&${this.state.page}`
+      );
 
       console.tron.log(response);
     } catch (error) {
       console.tron.log(error);
     }
-  }
+  };
 
   render() {
     return (

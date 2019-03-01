@@ -24,8 +24,7 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: "white",
     borderRadius: 5,
-    padding: 8,
-    marginTop: 15
+    marginTop: 10
   },
   containerCard: {
     flexDirection: "row",
