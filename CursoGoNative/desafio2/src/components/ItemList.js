@@ -9,7 +9,9 @@ const ItemList = props => {
         <View style={styles.containerCard}>
           <Image source={{ uri: props.image }} style={styles.image} />
           <View style={styles.containerCardText}>
-            <Text style={styles.title}>{props.title}</Text>
+            <Text numberOfLines={1} style={styles.title}>
+              {props.title}
+            </Text>
             <Text style={styles.subtitle}>{props.description}</Text>
           </View>
           <Icon name="angle-right" size={30} />
@@ -29,13 +31,14 @@ const styles = StyleSheet.create({
   containerCard: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 12
+    padding: 20
   },
   containerCardText: {
     flex: 2,
     flexDirection: "column",
     marginTop: -5,
-    marginLeft: 20
+    marginLeft: 20,
+    marginRight: 10
   },
   title: {
     fontSize: 18,

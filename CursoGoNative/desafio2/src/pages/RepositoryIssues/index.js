@@ -1,14 +1,20 @@
 import React, { Component } from "react";
 
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  FlatList
+} from "react-native";
 import api from "~/services/api";
-
-// import styles from './styles';
+import ItemList from "~/components/ItemList";
 
 export default class RepositoryIssues extends Component {
   state = {
-    title: "",
     stateIssue: "all",
+    refreshing: false,
+    issues: [],
     page: 1
   };
 
@@ -18,38 +24,106 @@ export default class RepositoryIssues extends Component {
     };
   };
 
-  async componentDidMount() {
+  componentWillMount() {
     this.findIssues();
   }
 
   findIssues = async () => {
+    if (this.state.refreshing) return;
+
+    const { page } = this.state;
+
+    await this.setState({ refreshing: true });
+
     const repository = this.props.navigation.getParam("repositoryFullName", "");
 
     try {
-      const response = await api.get(
-        `${repository}/issues?state=${this.state.stateIssue}&${this.state.page}`
+      const { data } = await api.get(
+        `${repository}/issues?state=${this.state.stateIssue}&page=${
+          this.state.page
+        }`
       );
 
-      console.tron.log(response);
+      await this.setState({
+        issues: [...this.state.issues, ...data],
+        refreshing: false,
+        page: page + 1
+      });
     } catch (error) {
       console.tron.log(error);
     }
+  };
+
+  handleButtonAll = async () => {
+    await this.setState({
+      stateIssue: "all",
+      page: 1,
+      issues: []
+    });
+
+    this.findIssues();
+  };
+
+  handleButtonOpen = async () => {
+    await this.setState({
+      stateIssue: "open",
+      page: 1,
+      issues: []
+    });
+
+    this.findIssues();
+  };
+
+  handleButtonClosed = async () => {
+    await this.setState({
+      stateIssue: "closed",
+      page: 1,
+      issues: []
+    });
+
+    this.findIssues();
   };
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.viewButtons}>
-          <TouchableOpacity style={styles.containerButtons}>
+          <TouchableOpacity
+            style={styles.containerButtons}
+            onPress={this.handleButtonAll}
+          >
             <Text style={styles.textButton}>Todas</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.containerButtons}>
+          <TouchableOpacity
+            style={styles.containerButtons}
+            onPress={this.handleButtonOpen}
+          >
             <Text style={styles.textButton}>Abertas</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.containerButtons}>
+          <TouchableOpacity
+            style={styles.containerButtons}
+            onPress={this.handleButtonClosed}
+          >
             <Text style={styles.textButton}>Fechadas</Text>
           </TouchableOpacity>
         </View>
+        <FlatList
+          style={styles.flatListIssues}
+          data={this.state.issues}
+          keyExtractor={item => String(item.id)}
+          refreshing={this.state.refreshing}
+          onRefresh={() => {}}
+          onEndReached={this.findIssues}
+          onEndReachedThreshold={0.1}
+          renderItem={({ item }) => (
+            <ItemList
+              onClick={() => {}}
+              title={item.title}
+              description={item.user.login}
+              image={item.user.avatar_url}
+            />
+          )}
+        />
       </View>
     );
   }
@@ -77,5 +151,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "black"
+  },
+  flatListIssues: {
+    marginTop: 20
   }
 });

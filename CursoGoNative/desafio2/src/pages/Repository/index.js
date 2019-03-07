@@ -17,7 +17,7 @@ export default class Repository extends Component {
   state = {
     refreshing: false,
     repository: "",
-    data: []
+    dataRepositories: []
   };
 
   static navigationOptions = {
@@ -29,41 +29,20 @@ export default class Repository extends Component {
   };
 
   findRepositoriesIssues = async () => {
+    const { dataRepositories } = this.state;
+
     this.setState({ refreshing: !this.state.refreshing });
     try {
-      const response = await api.get(this.state.repository);
+      const { data } = await api.get(this.state.repository);
 
-      if (response.data) {
-        let repository = {};
-        repository.name = response.data.name;
-        repository.full_name = response.data.full_name;
-        repository.id = response.data.id;
+      this.setState({
+        dataRepositories: [...dataRepositories, data]
+      });
 
-        if (response.data.organization) {
-          repository.organization = {};
-          repository.organization.login = response.data.organization.login;
-          repository.organization.avatar_url =
-            response.data.organization.avatar_url;
-        }
-
-        if (response.data.owner) {
-          repository.owner = {};
-          repository.owner.login = response.data.owner.login;
-          repository.owner.avatar_url = response.data.owner.avatar_url;
-        }
-
-        let repositories = this.state.data;
-        repositories.push(repository);
-
-        this.setState({
-          data: repositories
-        });
-
-        await AsyncStorage.setItem(
-          "@GithubExplore:repositories",
-          JSON.stringify(this.state.data)
-        );
-      }
+      await AsyncStorage.setItem(
+        "@GithubExplore:repositories",
+        JSON.stringify([...dataRepositories, data])
+      );
 
       console.tron.log(this.state.data);
     } catch (error) {
@@ -78,11 +57,11 @@ export default class Repository extends Component {
   };
 
   async componentWillMount() {
-    const repositories = await AsyncStorage.getItem(
-      "@GithubExplore:repositories"
+    const repositories = JSON.parse(
+      await AsyncStorage.getItem("@GithubExplore:repositories")
     );
 
-    this.setState({ data: JSON.parse(repositories) });
+    this.setState({ dataRepositories: repositories || [] });
   }
 
   render() {
@@ -104,7 +83,7 @@ export default class Repository extends Component {
         </View>
         <FlatList
           style={styles.flatListRepositories}
-          data={this.state.data}
+          data={this.state.dataRepositories}
           keyExtractor={item => String(item.id)}
           refreshing={this.state.refreshing}
           onRefresh={() => {}}
