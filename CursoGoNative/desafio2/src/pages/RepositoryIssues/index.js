@@ -1,12 +1,7 @@
 import React, { Component } from "react";
 
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  FlatList
-} from "react-native";
+import { View, TouchableOpacity, Text, FlatList } from "react-native";
+import styles from "~/pages/RepositoryIssues/styles";
 import api from "~/services/api";
 import ItemList from "~/components/ItemList";
 
@@ -128,31 +123,3 @@ export default class RepositoryIssues extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#DCDCDC"
-  },
-  viewButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#C0C0C0",
-    borderRadius: 5
-  },
-  containerButtons: {
-    flex: 1,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  textButton: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "black"
-  },
-  flatListIssues: {
-    marginTop: 20
-  }
-});
